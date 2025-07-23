@@ -3,7 +3,7 @@
 
 See:
 
-Guy E. Blelloch, Zachary Kend and Yuanhao Wei\
+Guy E. Blelloch, Zachary Kent and Yuanhao Wei\
 TLF: Transactional Lock Fusion\
 SPAA 2025
 
@@ -16,7 +16,7 @@ mkdir build
 cd build
 cmake ..
 cd benchmarks/transactions
-make -j <numprocs that won't kill your machine>
+make -j <at most num cores on your machine>
 ./runtrans
 ```
 
@@ -34,8 +34,9 @@ individual times and the geometric mean.
 
 ## Library Interface
 
-The library can either used as a traditional stm incorporating
-the TLF data structures or used to build your own TLF structures
+The library can either used as a traditional Software Transactional
+Memory (STM) incorporating the TLF data structures or used to build
+your own Optimistic Locking structures using TLF.
 The interface is hearer only.
 
 ```
@@ -71,9 +72,11 @@ namespace fuse {
 
 Any allocation or freeing within an atomic region should be performed
 with `New` and `Retire`, and any loads and stores of shared state
-should use `tlf_atomic`.  In addition we supply a set of data
-structures.  They can be used by including the relevant header file
-For example:
+should use `tlf_atomic`.  In addition, we supply a set of TLF data
+structures.  These are all based on the
+[Verlib](https://github.com/cmuparlay/verlib) concurrent data
+structures, which all use optimistic locking.  The TLF structures can
+be used by including the relevant header file For example:
 
 ```
 #include "fuse/structs/btree.h"
@@ -92,15 +95,13 @@ int result = fuse::atomic_region([&] {
 });
 ...
 ```
+Other structures include `arttree`, `hashtable`, `leaftree`, `treap`, `skiplist`, and `ordered_list`.
 
-In designing ones own TLF concurrent data structures based on
-optimistic locking, the following additional interface is useful:
+In designing your own optimistic locking data structures with TLF, the
+following additional interface can be used:
 
 ```
 namespace fuse {
-  template <typename T, typename F>
-  T with_epoch(F f);
-
   template <typename T>
   struct atomic<T> { // use like std::atomic
     atomic(T v);            // constructor
@@ -110,11 +111,14 @@ namespace fuse {
   }
 
   struct shared_mutex; // use like std::shared_mutex
+
+  template <typename T, typename F>
+  T with_epoch(F f);
 }
 ```
 
 Note that this `atomic` is not the same as `tlf_atomic`.  It is designed
-for implementing concurrent data strcutures.  In particular if not inside
+for implementing concurrent data structures.  In particular if not inside
 of a lock it is unprotected and will not ensure serializability (see the paper).
 Indeed `tlf_atomic` is implemented with `atomic` and locks as follows:
 
@@ -133,9 +137,9 @@ struct tlf_atomic {
       v.store(x);}};
 ```
 
-The `with_epoch` funtion is for memory protection, which is
+The `with_epoch` function is for memory protection, which is
 implemented with epoch-based reclamation.  It should be wrapped around
-any concurren functions if the memory it accesses can be freed
+any concurrent functions if the memory it accesses can be freed
 concurrently.    `atomic_region` and `atomic_read_only` include their own
 'with-epoch`, so you don't need to uses this inside atomic regions.
 
