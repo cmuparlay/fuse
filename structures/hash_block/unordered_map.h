@@ -10,15 +10,23 @@
 // than the original given size (i.e. number of buckets is fixes, but
 // number of entries per bucket can grow).
 
+#ifndef VERLIB_HASHBLOCK_H_
+#define VERLIB_HASHBLOCK_H_
+
+#include <functional>
+#include <iostream>
 #include <optional>
+#include <vector>
 #include <parlay/primitives.h>
 #include <verlib/verlib.h>
 
+namespace verlib {
+  
 template <typename K_,
 	  typename V_,
 	  class Hash = std::hash<K_>,
 	  class KeyEqual = std::equal_to<K_>>
-struct unordered_map {
+struct hash_block {
   using K = K_;
   using V = V_;
 private:
@@ -319,8 +327,8 @@ private:
   }
 
 public:
-  unordered_map(size_t n) : hash_table(Table(n)) {}
-  ~unordered_map() {
+  hash_block(size_t n) : hash_table(Table(n)) {}
+  ~hash_block() {
     auto& table = hash_table.table;
     parlay::parallel_for (0, table.size(), [&] (size_t i) {
       retire_node(table[i].load());});
@@ -437,13 +445,16 @@ public:
 };
 
 template <typename K, typename V, typename H, typename E>
-verlib::memory_pool<typename unordered_map<K,V,H,E>::Node1> unordered_map<K,V,H,E>::node_pool_1;
+verlib::memory_pool<typename hash_block<K,V,H,E>::Node1> hash_block<K,V,H,E>::node_pool_1;
 template <typename K, typename V, typename H, typename E>
-verlib::memory_pool<typename unordered_map<K,V,H,E>::Node3> unordered_map<K,V,H,E>::node_pool_3;
+verlib::memory_pool<typename hash_block<K,V,H,E>::Node3> hash_block<K,V,H,E>::node_pool_3;
 template <typename K, typename V, typename H, typename E>
-verlib::memory_pool<typename unordered_map<K,V,H,E>::Node7> unordered_map<K,V,H,E>::node_pool_7;
+verlib::memory_pool<typename hash_block<K,V,H,E>::Node7> hash_block<K,V,H,E>::node_pool_7;
 template <typename K, typename V, typename H, typename E>
-verlib::memory_pool<typename unordered_map<K,V,H,E>::Node31> unordered_map<K,V,H,E>::node_pool_31;
+verlib::memory_pool<typename hash_block<K,V,H,E>::Node31> hash_block<K,V,H,E>::node_pool_31;
 template <typename K, typename V, typename H, typename E>
-verlib::memory_pool<typename unordered_map<K,V,H,E>::BigNode> unordered_map<K,V,H,E>::big_node_pool;
+verlib::memory_pool<typename hash_block<K,V,H,E>::BigNode> hash_block<K,V,H,E>::big_node_pool;
 
+} // end namespace verlib
+
+#endif // VERLIB_HASHBLOCK_H_

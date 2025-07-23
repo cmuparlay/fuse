@@ -1,6 +1,11 @@
 #ifndef TLF_DEFS_H_
 #define TLF_DEFS_H_
 
+#ifndef NoHelp
+#define NoHelp
+#endif
+
+#include "../fuse/transactions.h"
 #include <shared_mutex>
 #include "flock/flock.h"
 #include "flock/acquired_pool.h"
@@ -27,6 +32,9 @@
 
 // this is the full interface
 namespace fuse {
+
+  using flck::with_epoch;
+  
   // currently only supports atomics that are pointers or bools
   template<typename T>
   using atomic = std::conditional_t<std::is_same_v<T, bool>,
@@ -43,19 +51,20 @@ namespace fuse {
   using tlf_internal::pool_clear;
   using tlf_internal::pool_stats;
 
-template <typename T>
-struct tlf_atomic {
-  atomic<T> v;
-  shared_mutex lock;
-  tlf_atomic(T v) : v(v) {}
-  T load() {
-    std::shared_lock lck(lock);
-    return v.load(); }
-  void store(T x) {
-    std::unique_lock lck(lock);
-    v.store(x);}
-  T operator=(T b) {store(b); return b; }
-};
+  template <typename T>
+  struct tlf_atomic {
+    atomic<T> v;
+    shared_mutex lock;
+    tlf_atomic(T v) : v(v) {}
+    T load() {
+      std::shared_lock lck(lock);
+      return v.load(); }
+    void store(T x) {
+      std::unique_lock lck(lock);
+      v.store(x);}
+    T operator=(T b) {store(b); return b; }
+  };
+
 } // fuse
 
 

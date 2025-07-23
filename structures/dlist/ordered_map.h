@@ -1,9 +1,18 @@
-#include <verlib/verlib.h>
+#ifndef VERLIB_DLIST_H_
+#define VERLIB_DLIST_H_
 
+#include <verlib/verlib.h>
+#include <functional>
+#include <iostream>
+#include <optional>
+#include <utility>
+
+namespace verlib {
+  
 template <typename K_,
           typename V_,
           typename Compare = std::less<K_>>
-struct ordered_map {
+struct dlist {
   using K = K_;
   using V = V_;
   static constexpr auto less = Compare{};
@@ -142,8 +151,8 @@ struct ordered_map {
     return head;
   }
     
-  ordered_map() : root(init()) {}
-  ordered_map(size_t n) : root(init()) {}
+  dlist() : root(init()) {}
+  dlist(size_t n) : root(init()) {}
 
   void print() {
     node* ptr = (root->next).load();
@@ -159,7 +168,7 @@ struct ordered_map {
     flck::Retire<node>(p);
   }
 
-  ~ordered_map() {retire_recursive(root);}
+  ~dlist() {retire_recursive(root);}
   
   long check() {
     node* ptr = (root->next).load();
@@ -185,3 +194,7 @@ struct ordered_map {
   static void stats() { flck::pool_stats<node>();}
 
 };
+
+  }
+
+#endif // VERLIB_DLIST_H_

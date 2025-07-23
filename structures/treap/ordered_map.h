@@ -1,8 +1,15 @@
+#ifndef VERLIB_TREAP_H_
+#define VERLIB_TREAP_H_
+
 #include <verlib/verlib.h>
 #include "rebalance.h"
 #include "parlay/parallel.h"
 #include "parlay/utilities.h"
+#include <functional>
+#include <iostream>
+#include <optional>
 
+namespace verlib { 
 #ifndef BALANCED
 bool balanced = true;
 #else
@@ -13,10 +20,10 @@ template <typename K_,
 	  typename V_,
 	  class Hash = parlay::hash<K_>,
 	  typename Compare = std::less<K_>>
-struct ordered_map {
+struct treap {
   using K = K_;
   using V = V_;
-  using Balance = Rebalance<ordered_map<K,V,Hash,Compare>>;
+  using Balance = Rebalance<treap<K,V,Hash,Compare>>;
   
   static constexpr auto less = Compare{};
   static constexpr auto hash = Hash{};
@@ -282,9 +289,9 @@ struct ordered_map {
   }
 
   node* empty() { return node_pool.New((node*) leaf_pool.New()); }
-  ordered_map() : root(empty()) {}
-  ordered_map(size_t n) : root(empty()) {}
-  ~ordered_map() { Retire(root);}
+  treap() : root(empty()) {}
+  treap(size_t n) : root(empty()) {}
+  ~treap() { Retire(root);}
   
   static void Retire(node* p) {
     if (p == nullptr) return;
@@ -379,7 +386,11 @@ struct ordered_map {
 };
 
 template <typename K, typename V, typename H, typename C>
-verlib::memory_pool<typename ordered_map<K,V,H,C>::node> ordered_map<K,V,H,C>::node_pool;
+verlib::memory_pool<typename treap<K,V,H,C>::node> treap<K,V,H,C>::node_pool;
 
 template <typename K, typename V, typename H, typename C>
-verlib::memory_pool<typename ordered_map<K,V,H,C>::leaf> ordered_map<K,V,H,C>::leaf_pool;
+verlib::memory_pool<typename treap<K,V,H,C>::leaf> treap<K,V,H,C>::leaf_pool;
+
+} // end namespace verlib
+
+#endif // VERLIB_TREAP_H_

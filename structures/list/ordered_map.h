@@ -1,9 +1,18 @@
-#include <verlib/verlib.h>
+#ifndef VERLIB_LIST_H_
+#define VERLIB_LIST_H_
 
+#include <verlib/verlib.h>
+#include <functional>
+#include <iostream>
+#include <optional>
+#include <utility>
+
+namespace verlib {
+  
 template <typename K_,
           typename V_,
           typename Compare = std::less<K_>>
-struct ordered_map {
+struct list {
   using K = K_;
   using V = V_;
   static constexpr auto less = Compare{};
@@ -147,8 +156,8 @@ struct ordered_map {
     }
   }
 
-  ordered_map() : root(node_pool.New(node_pool.New(nullptr,true),false)) {}
-  ordered_map(size_t n) : root(node_pool.New(node_pool.New(nullptr,true),false)) {}
+  list() : root(node_pool.New(node_pool.New(nullptr,true),false)) {}
+  list(size_t n) : root(node_pool.New(node_pool.New(nullptr,true),false)) {}
 
   void print() {
     node* ptr = (root->next).load();
@@ -164,7 +173,7 @@ struct ordered_map {
     node_pool.Retire(p);
   }
 
-  ~ordered_map() {retire_recursive(root);}
+  ~list() {retire_recursive(root);}
   
   long check() {
     node* ptr = (root->next).load();
@@ -192,4 +201,8 @@ struct ordered_map {
 };
 
 template <typename K, typename V, typename C>
-verlib::memory_pool<typename ordered_map<K,V,C>::node> ordered_map<K,V,C>::node_pool;
+verlib::memory_pool<typename list<K,V,C>::node> list<K,V,C>::node_pool;
+
+}
+
+#endif // VERLIB_LIST_H_

@@ -1,4 +1,6 @@
 
+namespace verlib {
+  
 template <typename Tree>
 struct Rebalance {
   using node = typename Tree::node;
@@ -70,3 +72,5 @@ struct Rebalance {
       std::cout << "bad right priority: " << priority(r) << ", " << priority(p) << std::endl;
   }
 };
+
+}

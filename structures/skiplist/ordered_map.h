@@ -1,11 +1,16 @@
+#ifndef VERLIB_SKIPLIST_H_
+#define VERLIB_SKIPLIST_H_
+
 #include <verlib/verlib.h>
 #include <parlay/primitives.h>
 #include <parlay/sequence.h>
 
+namespace verlib {
+  
 template <typename K_,
           typename V_,
           typename Compare = std::less<K_>>
-struct ordered_map {
+struct skiplist {
   using K = K_;
   using V = V_;
   static constexpr auto less = Compare{};
@@ -238,8 +243,8 @@ struct ordered_map {
     }
   }
 
-  ordered_map() : root((node*) tall_node_pool.New()) {}
-  ordered_map(long n) : root((node*) tall_node_pool.New()) {}
+  skiplist() : root((node*) tall_node_pool.New()) {}
+  skiplist(long n) : root((node*) tall_node_pool.New()) {}
 
   void print() {
     node* ptr = (root->next[0]).load();
@@ -250,7 +255,7 @@ struct ordered_map {
     std::cout << std::endl;
   }
 
-  ~ordered_map() {
+  ~skiplist() {
     node* p = root;
     std::vector<node*> tops;
     while (p != nullptr) {
@@ -301,10 +306,13 @@ struct ordered_map {
 };
 
 template <typename K, typename V, typename C>
-verlib::memory_pool<typename ordered_map<K,V,C>::shortNode> ordered_map<K,V,C>::short_node_pool;
+verlib::memory_pool<typename skiplist<K,V,C>::shortNode> skiplist<K,V,C>::short_node_pool;
 
 template <typename K, typename V, typename C>
-verlib::memory_pool<typename ordered_map<K,V,C>::tallNode> ordered_map<K,V,C>::tall_node_pool;
+verlib::memory_pool<typename skiplist<K,V,C>::tallNode> skiplist<K,V,C>::tall_node_pool;
 
 template <typename K, typename V, typename C>
-verlib::memory_pool<typename ordered_map<K,V,C>::Val> ordered_map<K,V,C>::val_pool;
+verlib::memory_pool<typename skiplist<K,V,C>::Val> skiplist<K,V,C>::val_pool;
+
+}
+#endif //VERLIB_SKIPLIST_H_

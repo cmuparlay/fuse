@@ -107,7 +107,7 @@ public:
   }
 
   bool insert(const K& k, const V& v) {
-    return verlib::with_epoch([=] {return insert_(k, v);}); }
+    return fuse::with_epoch([=] {return insert_(k, v);}); }
 
   bool remove_(const K& k) {
     while (true) {
@@ -130,7 +130,7 @@ public:
   }
 
   bool remove(const K& k) {
-    return verlib::with_epoch([=] { return remove_(k);});}
+    return fuse::with_epoch([=] { return remove_(k);});}
 
   std::optional<V> find_(const K& k) {
     auto [gp, p, l] = find_location(root, k);
@@ -139,7 +139,7 @@ public:
   }
 
   std::optional<V> find(const K& k) {
-    return verlib::with_epoch([&] { return find_(k);});}
+    return fuse::with_epoch([&] { return find_(k);});}
 
   std::optional<V> find_locked(const K& k) {
     while (true) {

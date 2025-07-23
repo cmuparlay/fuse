@@ -1,10 +1,15 @@
+#ifndef VERLIB_LEAFTREE_H_
+#define VERLIB_LEAFTREE_H_
+
 #include <verlib/verlib.h>
 #include <parlay/parallel.h>
 
+namespace verlib {
+  
 template <typename K_,
 	  typename V_,
 	  typename Compare = std::less<K_>>
-struct ordered_map {
+struct leaftree {
   using K = K_;
   using V = V_;
 
@@ -173,9 +178,9 @@ struct ordered_map {
     return ot();
   }
 
-  ordered_map() : root(internal_pool.New(leaf_pool.New())) {}
-  ordered_map(size_t n) : root(internal_pool.New(leaf_pool.New())) {}
-  ~ordered_map() { Retire(root);}
+  leaftree() : root(internal_pool.New(leaf_pool.New())) {}
+  leaftree(size_t n) : root(internal_pool.New(leaf_pool.New())) {}
+  ~leaftree() { Retire(root);}
   
   void print() {
     std::function<void(node*)> prec;
@@ -277,7 +282,10 @@ struct ordered_map {
 };
 
 template <typename K, typename V, typename C>
-verlib::memory_pool<typename ordered_map<K,V,C>::internal> ordered_map<K,V,C>::internal_pool;
+verlib::memory_pool<typename leaftree<K,V,C>::internal> leaftree<K,V,C>::internal_pool;
 
 template <typename K, typename V, typename C>
-verlib::memory_pool<typename ordered_map<K,V,C>::leaf> ordered_map<K,V,C>::leaf_pool;
+verlib::memory_pool<typename leaftree<K,V,C>::leaf> leaftree<K,V,C>::leaf_pool;
+
+}
+#endif // VERLIB_LEAFTREE_H_

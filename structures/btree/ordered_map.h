@@ -1,14 +1,25 @@
+#ifndef VERLIB_BTREE_H_
+#define VERLIB_BTREE_H_
+
 #include <verlib/verlib.h>
 #include <parlay/primitives.h>
+#include <algorithm>
+#include <functional>
+#include <iostream>
+#include <optional>
+#include <tuple>
+#include <type_traits>
 
 // A top-down implementation of abtrees
 // Nodes are split or joined on the way down to ensure that each node
 // can fit one more child, or remove one more child.
 
+namespace verlib {
+  
 template <typename K_,
           typename V_,
           typename Compare = std::less<K_>>
-struct ordered_map {
+struct btree {
   using K = K_;
   using V = V_;
   static verlib::memory_pool<V> value_pool;
@@ -688,11 +699,11 @@ struct ordered_map {
 
   // An empty tree is an empty leaf along with a root pointing tho the
   // leaf.  The root will always contain a single pointer.
-  ordered_map() : root(node_pool.New(leaf_pool.New(0))) {
+  btree() : root(node_pool.New(leaf_pool.New(0))) {
     // std::cout << "key size: " << sizeof(K) << std::endl;
     // std::cout << "value size: " << sizeof(V) << std::endl;
   }
-  ordered_map(size_t n) : root(node_pool.New(leaf_pool.New(0))) {
+  btree(size_t n) : root(node_pool.New(leaf_pool.New(0))) {
     // std::cout << "key size: " << sizeof(K) << std::endl;
     // std::cout << "value size: " << sizeof(V) << std::endl;
   }
@@ -711,7 +722,7 @@ struct ordered_map {
     }
   }
 
-  ~ordered_map() {retire_recursive(root);}
+  ~btree() {retire_recursive(root);}
 
   double total_height() {
     std::function<size_t(node*, size_t)> hrec;
@@ -809,10 +820,14 @@ struct ordered_map {
 };
 
 template <typename K, typename V, typename C>
-verlib::memory_pool<typename ordered_map<K,V,C>::node> ordered_map<K,V,C>::node_pool;
+verlib::memory_pool<typename btree<K,V,C>::node> btree<K,V,C>::node_pool;
 
 template <typename K, typename V, typename C>
-verlib::memory_pool<typename ordered_map<K,V,C>::leaf> ordered_map<K,V,C>::leaf_pool;
+verlib::memory_pool<typename btree<K,V,C>::leaf> btree<K,V,C>::leaf_pool;
 
 template <typename K, typename V, typename C>
-verlib::memory_pool<typename ordered_map<K,V,C>::V> ordered_map<K,V,C>::value_pool;
+verlib::memory_pool<typename btree<K,V,C>::V> btree<K,V,C>::value_pool;
+
+} // end namespace verlib
+
+#endif // VERLIB_BTREE_H_

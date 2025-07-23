@@ -13,10 +13,6 @@
 #include <parlay/sequence.h>
 #include "flock/flock.h"
 
-namespace verlib {
-  bool strict_lock = false;
-}
-
 #if defined(TINYSTM) || defined(TL2O)
 #define CRAPYSTM 1
 #endif

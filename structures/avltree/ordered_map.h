@@ -1,3 +1,6 @@
+#ifndef VERLIB_AVLTREE_H_
+#define VERLIB_AVLTREE_H_
+
 #include <verlib/verlib.h>
 #include <limits>
 #include <algorithm>
@@ -15,10 +18,12 @@
 
 // TODO: minimize number of writes to the log
 
+namespace verlib{
+  
 template <typename K_,
 	  typename V_,
 	  typename Compare = std::less<K_>>
-struct ordered_map {
+struct avltree {
   using K = K_;
   using V = V_;
 
@@ -386,17 +391,17 @@ struct ordered_map {
     return ot();
   }
 
-  ordered_map() {
+  avltree() {
     node* l = (node*) leaf_pool.New();
     root = node_pool.New(l);
   }
 
-  ordered_map(size_t n) { 
+  avltree(size_t n) { 
     node* l = (node*) leaf_pool.New();
     root = node_pool.New(l);
   }
 
-  ~ordered_map() { Retire(root);}
+  ~avltree() { Retire(root);}
   
   void print() {
     node* p = root;
@@ -492,7 +497,11 @@ struct ordered_map {
 };
 
 template <typename K, typename V, typename C>
-verlib::memory_pool<typename ordered_map<K,V,C>::node> ordered_map<K,V,C>::node_pool;
+verlib::memory_pool<typename avltree<K,V,C>::node> avltree<K,V,C>::node_pool;
 
 template <typename K, typename V, typename C>
-verlib::memory_pool<typename ordered_map<K,V,C>::leaf> ordered_map<K,V,C>::leaf_pool;
+verlib::memory_pool<typename avltree<K,V,C>::leaf> avltree<K,V,C>::leaf_pool;
+
+} // end namespace verlib
+
+#endif // VERLIB_AVLTREE_H_

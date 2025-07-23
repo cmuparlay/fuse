@@ -16,8 +16,8 @@
 //
 // Supports, insert, remove, find, upsert, range, size, check, clear, print (if key is printable)
 
-#ifndef FLOCK_ARTTREE_H_
-#define FLOCK_ARTTREE_H_
+#ifndef VERLIB_ARTTREE_H_
+#define VERLIB_ARTTREE_H_
 
 #include <algorithm>
 #include <functional>
@@ -31,6 +31,8 @@
 #include <verlib/verlib.h>
 #include <parlay/primitives.h>
 
+namespace verlib{
+  
 // string definition for integer types
 template <typename K>
 struct int_string {
@@ -43,7 +45,7 @@ struct int_string {
 template <typename K_,
           typename V_,
           typename String_ = int_string<K_>>
-struct ordered_map {
+struct arttree {
   using K = K_;
   using V = V_;
   using String = String_;
@@ -668,13 +670,13 @@ struct ordered_map {
                    std::optional<K>(start), std::optional<K>(end), 0);
   }
 
-  ordered_map() {
+  arttree() {
     auto r = full_pool.New();
     r->byte_num = 0;
     root = (node*) r;
   }
 
-  ordered_map(size_t n) {
+  arttree(size_t n) {
     auto r = full_pool.New();
     r->byte_num = 0;
     root = (node*) r;
@@ -745,7 +747,7 @@ struct ordered_map {
       full_pool.Retire(pp);
     }
   }
-  ~ordered_map() { retire_recursive(root);}
+  ~arttree() { retire_recursive(root);}
   
   long check() {
     std::function<size_t(node*)> crec;
@@ -824,14 +826,15 @@ struct ordered_map {
 };
 
 template <typename K, typename V, typename S>
-verlib::memory_pool<typename ordered_map<K,V,S>::full_node> ordered_map<K,V,S>::full_pool;
+verlib::memory_pool<typename arttree<K,V,S>::full_node> arttree<K,V,S>::full_pool;
 template <typename K, typename V, typename S>
-verlib::memory_pool<typename ordered_map<K,V,S>::indirect_node> ordered_map<K,V,S>::indirect_pool;
+verlib::memory_pool<typename arttree<K,V,S>::indirect_node> arttree<K,V,S>::indirect_pool;
 template <typename K, typename V, typename S>
-verlib::memory_pool<typename ordered_map<K,V,S>::sparse_node> ordered_map<K,V,S>::sparse_pool;
+verlib::memory_pool<typename arttree<K,V,S>::sparse_node> arttree<K,V,S>::sparse_pool;
 template <typename K, typename V, typename S>
-verlib::memory_pool<typename ordered_map<K,V,S>::small_leaf> ordered_map<K,V,S>::small_leaf_pool;
+verlib::memory_pool<typename arttree<K,V,S>::small_leaf> arttree<K,V,S>::small_leaf_pool;
 template <typename K, typename V, typename S>
-verlib::memory_pool<typename ordered_map<K,V,S>::big_leaf> ordered_map<K,V,S>::big_leaf_pool;
+verlib::memory_pool<typename arttree<K,V,S>::big_leaf> arttree<K,V,S>::big_leaf_pool;
 
-#endif // FLOCK_ARTTREE_H_
+}
+#endif // VERLIB_ARTTREE_H_
