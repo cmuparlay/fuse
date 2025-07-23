@@ -33,13 +33,14 @@ parameters 0 and .99, and transaction sizes of 1 and 16 operations,
 reporting the individual times and the geometric mean.
 
 The naming convention is `<struct>_<stm_system>_<variant>` where
-`<struct>` is one of `arttree`, `btree`, `hash_block`, `skiplist`,
-`leaftree`, `avltree`, `treap` or `list` and `<stm_system>` is one of
-`mv` (multiversion) or `2plsf` and `<variant>` is one of
 
-* `stm` : traditional stm
-* `tlf` : TLF with coarse grained locks (original locks in the optimistic locking code)
-* `tlf_stm` : TLF with fine grained locks (locks for each write)
+* `<struct>` is one of `arttree`, `btree`, `hash_block`, `skiplist`,
+`leaftree`, `avltree`, `treap` or `list`, and
+* `<stm_system>` is one of `mv` (multiversion) or `2plsf`,
+* and `<variant>` is one of
+ * `stm` : traditional stm
+ * `tlf` : TLF with coarse grained locks (original locks in the optimistic locking code)
+ * `tlf_stm` : TLF with fine grained locks (locks for each write)
 
 Furthermore we have `<struct>` for each structure, which is just the lock-based
 concurrent data structure and `<struct>_versioned` which is the original
@@ -50,7 +51,7 @@ data structure with multiversioning (using verlib).
 The library can either used as a traditional Software Transactional
 Memory (STM) incorporating the TLF data structures or used to build
 your own Optimistic Locking structures using TLF.
-The interface is hearer only.
+The interface is header only.
 
 ```
   #include "fuse/fuse.h"
@@ -60,12 +61,6 @@ If used as an a traditional STM the relevant interface is:
 
 ```
 namespace fuse {
-  template <typename T>
-  T* New(args...);     // use like 'new T(args...)'
-
-  template <typename T>
-  void Retire(T* x);  //  use like 'delete x'
-
   // f is a functor with no argument and returning T
   template <typename T, typename F>
   T atomic_region(F f);
@@ -80,16 +75,22 @@ namespace fuse {
     void store(T val);      // store contents
     T operator=(T val);     // assignment
   }
+
+  template <typename T>
+  T* New(args...);     // use like 'new T(args...)'
+
+  template <typename T>
+  void Retire(T* x);  //  use like 'delete x'
 }
 ```
 
-Any allocation or freeing within an atomic region should be performed
-with `New` and `Retire`, and any loads and stores of shared state
-should use `tlf_atomic`.  In addition, we supply a set of TLF data
+Any loads and stores of shared state should use `tlf_atomic` and any
+allocation or freeing within an atomic region should be performed with
+`New` and `Retire`.  In addition, we supply a set of TLF data
 structures.  These are all based on the
 [Verlib](https://github.com/cmuparlay/verlib) concurrent data
 structures, which all use optimistic locking.  The TLF structures can
-be used by including the relevant header file For example:
+be used by including the relevant header file.  For example:
 
 ```
 #include "fuse/structs/btree.h"
