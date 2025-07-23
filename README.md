@@ -38,9 +38,9 @@ The naming convention is `<struct>_<stm_system>_<variant>` where
 `leaftree`, `avltree`, `treap` or `list`, and
 * `<stm_system>` is one of `mv` (multiversion) or `2plsf`,
 * and `<variant>` is one of
- * `stm` : traditional stm
- * `tlf` : TLF with coarse grained locks (original locks in the optimistic locking code)
- * `tlf_stm` : TLF with fine grained locks (locks for each write)
+  * `stm` : traditional stm
+  * `tlf` : TLF with coarse grained locks (original locks in the optimistic locking code)
+  * `tlf_stm` : TLF with fine grained locks (locks for each write)
 
 Furthermore we have `<struct>` for each structure, which is just the lock-based
 concurrent data structure and `<struct>_versioned` which is the original
