@@ -2,7 +2,7 @@
 #define FUSE_LIST_H
   
 namespace fuse {
-#include "../../../structures/list/ordered_map.h"
+#include "../../structures/list/ordered_map.h"
   template <typename K,
             typename V,
             typename Compare = std::less<K>>

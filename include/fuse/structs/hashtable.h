@@ -2,7 +2,7 @@
 #define FUSE_HASHTABLE_H
 
 namespace fuse {
-#include "../../../structures/hash_block/unordered_map.h"
+#include "../../structures/hash_block/unordered_map.h"
   template <typename K,
             typename V,
             class Hash = std::hash<K>,

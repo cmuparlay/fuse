@@ -2,7 +2,7 @@
 #define FUSE_SKIPLIST_H
   
 namespace fuse {
-#include "../../../structures/skiplist/ordered_map.h"
+#include "../../structures/skiplist/ordered_map.h"
   template <typename K,
             typename V,
             typename Compare = std::less<K>>

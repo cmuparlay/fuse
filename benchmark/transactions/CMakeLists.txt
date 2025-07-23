@@ -1,7 +1,7 @@
 set(SOURCES ../test_sets.cpp)
 
-set(STRUCT_DIR ${PROJECT_SOURCE_DIR}/structures)
-set(STM_STRUCT_DIR ${PROJECT_SOURCE_DIR}/stm_structures)
+set(STRUCT_DIR ${PROJECT_SOURCE_DIR}/include/structures)
+set(STM_STRUCT_DIR ${PROJECT_SOURCE_DIR}/include/stm_structures)
 
 copy_bench_file("runtrans")
 
