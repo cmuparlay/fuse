@@ -19,7 +19,7 @@ class transactions(parameters) :
     zipfians = [0, .99]
     trans_sizes = [1, 16]
     mix_percents = [[0,0,0,0], [5,0,0,0], [50,0,0,0]]
-    suffixes_all = ["_fuse_stm", "_fuse_tlf" , "_fuse_tlf_stm", "_2plsf_stm", "_2plsf_tlf", "_2plsf_tlf_stm"]
+    suffixes_all = ["_mv_stm", "_mv_tlf" , "_mv_tlf_stm", "_2plsf_stm", "_2plsf_tlf", "_2plsf_tlf_stm"]
 
 run_all(transactions)
 
@@ -34,7 +34,7 @@ class defaults(parameters) :
     zipfians = [.9]
     trans_sizes = [4]
     mix_percents = [[5,0,0,0]]
-    suffixes_all = ["_fuse_stm", "_fuse_tlf", "_2plsf_stm", "_2plsf_tlf_stm"]
+    suffixes_all = ["_mv_stm", "_mv_tlf", "_2plsf_stm", "_2plsf_tlf_stm"]
 
 # over sizes
 class transactions(defaults) :
@@ -83,7 +83,7 @@ class other(parameters) :
     zipfians = [0]
     trans_sizes = [16]
     mix_percents = [[0,0,0,0],[5,0,0,0],[10,0,0,0],[20,0,0,0],[50,0,0,0],[100,0,0,0]]
-    suffixes_all = ["", "_versioned", "_fuse_tlf", "_fuse_tlf_stm", "_fuse_stm", "_2plsf_tlf", "_2plsf_tlf_stm", "_2plsf_stm"]
+    suffixes_all = ["", "_versioned", "_mv_tlf", "_mv_tlf_stm", "_mv_stm", "_2plsf_tlf", "_2plsf_tlf_stm", "_2plsf_stm"]
                     
 run_all(other)
 

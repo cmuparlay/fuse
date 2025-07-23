@@ -24,13 +24,26 @@ This will write the timings to a file in the directory `timings`.  Alternatively
 you can run individual benchmarks, e.g.:
 
 ```
-./btree_fuse_tlf -n 100000,10000000 -u 0,5,50 -z 0,.99 -trans 1,16
+./btree_mv_tlf -n 100000,10000000 -u 0,5,50 -z 0,.99 -trans 1,16
 ```
 
-will run the fuse version of btree on all combinations of tree sizes
-of 100K and 10M, update rates of 0, 5 and 50%, zipfian parameters 0
-and .99, and transaction sizes of 1 and 16 operations, reporting the
-individual times and the geometric mean.
+will run the multiversion TLF version of btree on all combinations of
+tree sizes of 100K and 10M, update rates of 0, 5 and 50%, zipfian
+parameters 0 and .99, and transaction sizes of 1 and 16 operations,
+reporting the individual times and the geometric mean.
+
+The naming convention is `<struct>_<stm_system>_<variant>` where
+`<struct>` is one of `arttree`, `btree`, `hash_block`, `skiplist`,
+`leaftree`, `avltree`, `treap` or `list` and `<stm_system>` is one of
+`mv` (multiversion) or `2plsf` and `<variant>` is one of
+
+* `stm` : traditional stm
+* `tlf` : TLF with coarse grained locks (original locks in the optimistic locking code)
+* `tlf_stm` : TLF with fine grained locks (locks for each write)
+
+Furthermore we have `<struct>` for each structure, which is just the lock-based
+concurrent data structure and `<struct>_versioned` which is the original
+data structure with multiversioning (using verlib).
 
 ## Library Interface
 
@@ -96,6 +109,7 @@ int result = fuse::atomic_region([&] {
 ...
 ```
 Other structures include `arttree`, `hashtable`, `leaftree`, `treap`, `skiplist`, and `ordered_list`.
+Another more detailed example is given [here](examples/move.cpp).
 
 In designing your own optimistic locking data structures with TLF, the
 following additional interface can be used:
@@ -143,7 +157,7 @@ any concurrent functions if the memory it accesses can be freed
 concurrently.    `atomic_region` and `atomic_read_only` include their own
 'with-epoch`, so you don't need to uses this inside atomic regions.
 
-See `structures/tlf_leaftree/ordered_map.h` for an example.  You can run this
+See [`tlf_leaftree`](structures/tlf_leaftree/ordered_map.h) for an example.  You can run this
 by making as described above and using, e.g.:
 ```
 ./leaftree_fuse -n 100000,10000000 -u 0,5,50 -z 0,.99 -trans 1,16
