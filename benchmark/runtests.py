@@ -240,6 +240,7 @@ def run_tests(tests, sizes, params, filename):
                     mean_of_throughputs(test + suffix, filename)
 
 def run_all(params) :
+    os.makedirs("../../../timings", exist_ok=True)
     filename = "../../../timings/" + hostname[0:5] + "_" + params.file_suffix + "_" + today
     if test_only :
         params.time = .2
