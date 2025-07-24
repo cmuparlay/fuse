@@ -9,8 +9,8 @@ int main() {
   int n = 1000000;
 
   fuse::tlf_leaftree_map<int,int> a;
-  fuse::tlf_hashtable_map<int,int> b(n);
-  fuse::tlf_atomic<int> c(0);
+  fuse::tlf_leaftree_map<int,int> b;
+  fuse::tlf_atomic<bool> c(false);
 
   // insert [0..n) into a in parallel
   parlay::parallel_for(0, n, [&] (long i) {
@@ -30,11 +30,15 @@ int main() {
         }});
     } else {
       fuse::atomic_region([&] {
-        if (a.find(i-n).has_value() == b.find(i-n).has_value())
-          c.store(c.load() + 1); });
+        bool x = a.find(i-n).has_value();
+        bool y = b.find(i-n).has_value();
+        if (x == y) {
+          c.store(true);
+        }
+      });
     }
   });
 
-  if (c.load() == 0) std::cout << "I'm good" << std::endl;
+  if (!c.load()) std::cout << "I'm good" << std::endl;
   else std::cout << "Yikes!, failed atomicity: " << c.load() << std::endl;
 }
