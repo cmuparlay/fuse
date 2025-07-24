@@ -4,6 +4,12 @@
 #ifndef NoHelp
 #define NoHelp
 #endif
+#ifndef MV_TLF
+#define MV_TLF
+#endif
+#ifndef HashLock
+#define HashLock
+#endif
 
 #include <shared_mutex>
 #include "flock/flock.h"
@@ -71,10 +77,9 @@ namespace fuse {
   template<typename T>
   using atomic = std::conditional_t<std::is_same_v<T, bool>,
 				    tlf_internal::atomic_bool,
-                                    tlf_internal::versioned_ptr<std::remove_pointer_t<T>>>;
-    //  				    std::conditional_t<std::is_pointer_v<T>,
-    //                                               indirect_atomic<T>>>;
-  
+                                    std::conditional_t<std::is_pointer_v<T>,
+                                                       tlf_internal::versioned_ptr<std::remove_pointer_t<T>>,
+                                                       indirect_atomic<T>>>;
 
   template <typename T>
   struct tlf_atomic {

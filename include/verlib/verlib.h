@@ -17,16 +17,16 @@
 #define CRAPYSTM 1
 #endif
 
-#ifdef Versioned
+#if defined(Versioned)
 #define WeakLoad
 #define AtomicSingleton
   
 // versioned objects, ptr_type includes version chains
-#ifdef Recorded_Once
+#if defined(Recorded_Once)
 #include "versioned_recorded_once.h"
-#elif FullyIndirect
+#elif defined(FullyIndirect)
 #include "versioned_indirect.h"
-#elif GenSnapshot
+#elif defined(GenSnapshot)
 #include "versioned_generalized.h"
 #else
 #include "versioned_hybrid.h"
@@ -48,30 +48,30 @@ namespace verlib {
   }
 }
 
-#elif MV_TLF_STM
+#elif defined(MV_TLF_STM)
 #include "../fuse/transactions_nwl.h"
 #define WeakLoad
 #define MV_TR
 
-#elif MV_TLF
+#elif defined(MV_TLF)
 #include "../fuse/transactions.h"
 #define WeakLoad
 #define AtomicSingleton
 #define MV_TR
 
-#elif MV_STM
+#elif defined(MV_STM)
 #include "../fuse/stm.h"
 #define MV_TR
 
-#elif SV_TLF_STM
+#elif defined(SV_TLF_STM)
 #define WeakLoad
 #include "../other_stms/tlf_glue.h"
 
-#elif SV_TLF
+#elif defined(SV_TLF)
 #define WeakLoad
 #include "../other_stms/tlf_glue.h"
 
-#elif SV_STM
+#elif defined(SV_STM)
 #include "../other_stms/stm_glue.h"
 #else // Not Versioned or Transactional
 #define WeakLoad

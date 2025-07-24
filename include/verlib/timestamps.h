@@ -369,7 +369,7 @@ timestamp_write_hw global_stamp;
 #elif NoIncStamp
 timestamp_no_inc global_stamp;
 #else
-timestamp_read_write global_stamp;
+timestamp_read global_stamp{200};
 #endif
 
 const TS zero_stamp = 1;

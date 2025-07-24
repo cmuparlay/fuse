@@ -79,7 +79,6 @@ namespace verlib {
 #else
   struct atomic_bool {
   public:
-    long val;
     atomic_bool(bool x)  {}
     bool load() { return false;}
     void validate() {}
