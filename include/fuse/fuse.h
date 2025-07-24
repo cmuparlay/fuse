@@ -34,12 +34,8 @@
 namespace fuse {
 
   using flck::with_epoch;
-  
+
   // currently only supports atomics that are pointers or bools
-  template<typename T>
-  using atomic = std::conditional_t<std::is_same_v<T, bool>,
-				    verlib::atomic_bool,
-				    verlib::versioned_ptr<std::remove_pointer_t<T>>>;
   using tlf_internal::atomic_region;
   using tlf_internal::atomic_read_only;
   using tlf_internal::shared_mutex;
@@ -50,6 +46,35 @@ namespace fuse {
   // some functions for managing the memory pool
   using tlf_internal::pool_clear;
   using tlf_internal::pool_stats;
+
+  template <typename T>
+  struct indirect : versioned {
+    T value;
+    indirect(T value) : value(value) {}
+  };
+
+  // if not a boolean or versioned pointer we need to use indirection
+  template <typename T>
+  struct indirect_atomic {
+    verlib::versioned_ptr<indirect<T>> ptr;
+    indirect_atomic(T v) : ptr(New<indirect<T>>(v)) {}
+    indirect_atomic() : ptr(nullptr) {}
+    ~indirect_atomic() {Retire(ptr.load());}
+    T load() { return ptr.load()->value; }
+    void store(T v) {
+      auto old = ptr.load();
+      ptr.store(New<indirect<T>>(v));
+      Retire(old);
+    }
+    T operator=(T b) {store(b); return b; }
+  };
+  
+  template<typename T>
+  using atomic = std::conditional_t<std::is_same_v<T, bool>,
+				    verlib::atomic_bool,
+				    std::conditional_t<std::is_pointer_v<T>,
+                                                       verlib::versioned_ptr<std::remove_pointer_t<T>>,
+                                                       indirect_atomic<T>>>;
 
   template <typename T>
   struct tlf_atomic {

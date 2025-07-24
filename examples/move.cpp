@@ -10,7 +10,7 @@ int main() {
 
   fuse::tlf_leaftree_map<int,int> a;
   fuse::tlf_hashtable_map<int,int> b(n);
-  fuse::tlf_atomic<bool> c(false);
+  fuse::tlf_atomic<int> c(0);
 
   // insert [0..n) into a in parallel
   parlay::parallel_for(0, n, [&] (long i) {
@@ -31,10 +31,10 @@ int main() {
     } else {
       fuse::atomic_region([&] {
         if (a.find(i-n).has_value() == b.find(i-n).has_value())
-          c.store(true); });
+          c.store(c.load() + 1); });
     }
   });
 
-  if (!c.load()) std::cout << "I'm good" << std::endl;
-  else "Yikes!, failed atomicity";
+  if (c.load() == 0) std::cout << "I'm good" << std::endl;
+  else std::cout << "Yikes!, failed atomicity: " << c.load() << std::endl;
 }
