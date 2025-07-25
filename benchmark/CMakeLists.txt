@@ -10,6 +10,6 @@ foreach(file ${BENCH_FILES})
 endforeach()
 
 add_subdirectory(transactions)
-
+add_subdirectory(verlib)
 
 

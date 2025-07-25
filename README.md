@@ -57,6 +57,8 @@ The interface is header only.
   #include "fuse/fuse.h"
 ```
 
+### Using as a traditional STM
+
 If used as an a traditional STM, the relevant interface is:
 
 ```
@@ -87,7 +89,6 @@ namespace fuse {
   void Retire(T* x);  
 }
 ```
-
 Any loads and stores of shared state should use `tlf_atomic` and any
 allocation or freeing within an atomic region should be performed with
 `New` and `Retire`.  In addition, we supply a set of TLF data
@@ -116,7 +117,9 @@ int result = fuse::atomic_region([&] {
 Other structures include `arttree`, `hashtable`, `leaftree`, `treap`, `skiplist`, and `ordered_list`.
 Another more detailed example is given [here](examples/move.cpp).
 
-In designing your own optimistic locking data structures with TLF, the
+### Designing your own optimistic locking algorithms
+
+For designing your own optimistic locking data structures with TLF, the
 following additional interface can be used:
 
 ```
@@ -175,3 +178,54 @@ by making as described above and using, e.g.:
 All other structures in `structures/` are carried over from `verlib`
 and are therefore written in a slightly different style (e.g. using
 verlib namespace, and verlib style locks).
+
+## Using Verlib
+
+This repository also includes the latest version of the verlib library from:
+
+Guy E. Blelloch and Yuanhao Wei\
+VERLIB: Concurrent Versioned Pointers\
+PPoPP 2024
+
+To test and run those benchmarks:
+
+```
+mkdir build
+cd build
+cmake ..
+cd benchmarks/verlib
+make -j <at most num cores on your machine>
+./rungraphs
+```
+
+This will write the timings to a file in the directory `timings`.  Alternatively
+you can run individual benchmarks in the same way as in fuse, e.g.:
+
+```
+./arttree_lf_versioned_hs -n 100000,10000000 -u 0,5,50 -z 0,.99 -trans 1,16
+```
+
+Here the naming convention for the executable is `<struct>_<lock_type>_<versioning_type>_<timestamp_type>`
+where
+
+* `<struct>` is one of `arttree`, `btree`, `hash_block`, `skiplist`,
+`leaftree`, `avltree`, `treap` or `list`, and
+* `<lock_type>` is `lf` (lock free locks) or `lck` (traditional locks),
+* `<versioning_type>` is one of
+  * `versioned` : verlib's versioning approach using indirection avoidance
+  * `indirect` : without indirection avoidance
+  * `reconce` : for recored once structures (no indirection)
+  * `noshortcut` : indirection avoidance but no shortcutting
+  * `noversion` : no versioning
+* and <timestamp_type> is one of
+  * `ls` : verlib's lazy stamp (default)
+  * `hs` : hardware timestamp
+  * `tl2s` : timestamp approach from tl2
+  * `rs` : read stamp (incremented on read-only snapshots)
+  * `ws` : write stamp (incremented on updates)
+  * `ns` : no stamp (snapshots will not be atomic)
+
+We do not compile all combinations since there are too many (8 x 2 x 5
+x 6), but the `CMakeLists.txt` can be edited to compile other
+combinations.
+

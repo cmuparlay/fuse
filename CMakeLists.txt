@@ -32,6 +32,11 @@ target_include_directories(fuse INTERFACE ${FUSE_INCLUDE_DIR})
 target_compile_features(fuse INTERFACE cxx_std_17)
 target_compile_options(fuse INTERFACE -mcx16 -march=native -g)
 
+add_library(verlib INTERFACE)
+target_include_directories(verlib INTERFACE ${FUSE_INCLUDE_DIR})
+target_compile_features(verlib INTERFACE cxx_std_17)
+target_compile_options(verlib INTERFACE -mcx16 -march=native -g)
+
 # Find threading library
 find_package(Threads REQUIRED)
 target_link_libraries(fuse INTERFACE Threads::Threads)
