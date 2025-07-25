@@ -16,7 +16,7 @@ namespace tlf_internal {
     void Delete(T* ptr) { pool.Delete(ptr); }
 
     bool is_helping() {
-#ifdef NoHelp
+#ifndef FlockHelp
       return false;
 #else
       return flck::internal::helping;

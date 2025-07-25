@@ -48,7 +48,7 @@ namespace tlf_internal {
   using namespace verlib;
 
   bool is_helping() {
-#ifdef NoHelp
+#ifndef FlockHelp
     return false;
 #else
     return flck::internal::helping;

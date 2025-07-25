@@ -49,7 +49,7 @@ private:
 #ifndef NoShortcut
     ver_link* ptr_ = (ver_link*) strip_indirect(ptr);
     if (ptr_->time_stamp.load_ni() <= done_stamp) {
-#ifdef NoHelp
+#ifndef FlockHelp
       if (v.cas(ptr, ptr_->value))
 	link_pool.Retire(ptr_);
 #else
@@ -90,7 +90,7 @@ private:
   }
 
   bool cas_from_cam(versioned* old_v, versioned* new_v) {
-#ifdef NoHelp
+#ifndef FlockHelp
     return v.cas(old_v, new_v);
 #else
     v.cam(old_v, new_v);

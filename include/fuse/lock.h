@@ -39,7 +39,7 @@ public:
   auto try_lock_no_delay(Thunk f) {return try_lock(f);}
 };
 
-#ifdef NoHelp
+#ifndef FlockHelp
 template <typename F>
 bool run_with_locks_rec(int i, transaction_descriptor* descriptor, F f, bool do_help) {
   if (i == descriptor->lock_log.size()) return f();

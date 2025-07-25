@@ -47,7 +47,7 @@ private:
   }
 
   bool idempotent_cas(version_link* old_v, version_link* new_v) {
-#ifdef NoHelp
+#ifndef FlockHelp
     return v.cas(old_v, new_v);
 #else
     v.cam(old_v, new_v);

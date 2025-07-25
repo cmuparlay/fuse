@@ -164,7 +164,9 @@ any concurrent functions if the memory it accesses can be freed
 concurrently.    `atomic_region` and `atomic_read_only` include their own
 'with-epoch`, so you don't need to uses this inside atomic regions.
 
-See [`tlf_leaftree`](include/structures/tlf_leaftree/ordered_map.h) for an example.  You can run this
+See [`tlf_leaftree`](include/structures/tlf_leaftree/ordered_map.h) for an example.
+This is basically the example from the paper.
+You can run this
 by making as described above and using, e.g.:
 ```
 ./leaftree_fuse -n 100000,10000000 -u 0,5,50 -z 0,.99 -trans 1,16

@@ -151,7 +151,7 @@ namespace tlf_internal {
   };
   thread_local transaction_descriptor* current_transaction = nullptr;
 
-#ifdef NoHelp
+#ifndef FlockHelp
   flck::internal::acquired_pool<transaction_descriptor> trans_descriptor_pool;
 #else
   flck::internal::acquired_pool<transaction_descriptor> trans_descriptor_pool;

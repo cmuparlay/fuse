@@ -49,7 +49,7 @@
 //    clear()
 
 
-#ifdef NoHelp  // use regular locks
+#ifndef FlockHelp  // use regular locks
 #include "spin_lock.h"
 #include "lock_types.h"
 #else  // use lock free locks
@@ -68,7 +68,7 @@ namespace flck {
 
   using epoch::with_epoch;
   
-#ifdef HashLock
+#ifndef NoHashLock
 struct lock {
 private:
   static const int bucket_bits = 18;
@@ -91,7 +91,7 @@ public:
   template <typename Thunk>
   auto read_lock(Thunk f) {return f();}
 
-#ifdef NoHelp
+#ifndef FlockHelp
   bool try_lock_no_unlock() { return get_lock()->try_lock_no_unlock();}
   void lock_no_unlock() { get_lock()->lock_no_unlock();}
   void unlock() { get_lock()->unlock();}

@@ -1,14 +1,8 @@
 #ifndef TLF_DEFS_H_
 #define TLF_DEFS_H_
 
-#ifndef NoHelp
-#define NoHelp
-#endif
 #ifndef MV_TLF
 #define MV_TLF
-#endif
-#ifndef HashLock
-#define HashLock
 #endif
 
 #include <shared_mutex>
