@@ -24,15 +24,15 @@ int main() {
   parlay::parallel_for(0, 2 * n, [&] (long i) {
     if (i < n) {                               
       fuse::atomic_region([&] {
-        auto x = a.find_locked(i);
+        auto x = a.find(i);
         if (x.has_value()) {
           b.insert(i, *x);
           a.remove(i);
         }});
     } else {
       fuse::atomic_region([&] {
-        bool x = a.find_locked(i-n).has_value();
-        bool y = b.find_locked(i-n).has_value();
+        bool x = a.find(i-n).has_value();
+        bool y = b.find(i-n).has_value();
         if (x == y)
           c.store(c.load() + 1);
       });

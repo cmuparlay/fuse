@@ -3,10 +3,20 @@
   
 namespace fuse {
 #include "../../structures/arttree/ordered_map.h"
-  template <typename K,
-          typename V,
-          typename String = verlib::int_string<K>>
-  using tlf_arttree_map = verlib::arttree<K,V,String>;
+  template <typename K_,
+            typename V_,
+            typename String = verlib::int_string<K_>>
+  struct tlf_arttree_map {
+    using T = verlib::arttree<K_,V_,String>;
+    using K = typename T::K;
+    using V = typename T::V;
+    T tr;
+    tlf_arttree_map(long n) : tr(T(n)) {}
+    std::optional<V> find(const K& k) {return tr.find_locked(k);}
+    bool insert(const K& k , const V& v) {return tr.insert(k,v);}
+    bool remove(const K& k) {return tr.remove(k);}
+    long size() {return tr.size();}
+  };
 }
 
 #endif

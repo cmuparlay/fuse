@@ -91,6 +91,7 @@ private:
 
 public:
   bool insert(const K& k, const V& v) {
+    return fuse::with_epoch([=] {
     while (true) {                              
       auto [gp, p, l] = find_leaf(k);
       auto ptr = get_child(p, k);
@@ -103,13 +104,11 @@ public:
               fuse::New<internal>(l->key, new_l, l) :
               fuse::New<internal>(k, l, new_l));
       return true;
-    }
+    }});
   }
-
-  bool insert_individual(const K& k, const V& v) {
-    return fuse::with_epoch([=] {return insert(k, v);});}
   
   bool remove(const K& k) {
+    return fuse::with_epoch([=] {
     while (true) {
       auto [gp, p, l] = find_leaf(k);
       if (!equal(k, l)) return false;
@@ -126,11 +125,8 @@ public:
         fuse::Retire<leaf>(l);
         return true;
       }
-    }
+    }});
   }
-
-  bool remove_individual(const K& k) {
-    return fuse::with_epoch([=] {return remove(k);});}
 
   std::optional<V> find_(const K& k) {
     auto [gp, p, l] = find_leaf(k);
@@ -138,10 +134,10 @@ public:
     else return {};
   }
 
-  std::optional<V> find(const K& k) {
+  std::optional<V> find_single(const K& k) {
     return fuse::with_epoch([&] { return find_(k);});}
 
-  std::optional<V> find_locked(const K& k) {
+  std::optional<V> find(const K& k) {
     while (true) {
       auto [gp, p, l] = find_leaf(k);
       auto ptr = get_child(p, k);
@@ -169,13 +165,6 @@ public:
   
   long size() {return size_recursive(root->left.load()) - 1; }
 
-  // the following is just needed for benchmarks
-  long check() { return size(); }
-  static void clear() {}
-  static void reserve(size_t n) { }
-  static void shuffle(size_t n) { }
-  static void stats() {}
-  void print() {}
 };
 
 } // end namespace fuse
