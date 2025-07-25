@@ -108,5 +108,5 @@ it needs to include:
   void upsert(const K& k, const V& v);
 ```
 
-Unlike `insert`, which does nothing if the key is in the set, it needs
+Unlike `insert`, which does nothing if the key is in the map, it needs
 to overwrite an entry if it is already in the map.

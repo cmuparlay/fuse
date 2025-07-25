@@ -57,7 +57,7 @@ The interface is header only.
   #include "fuse/fuse.h"
 ```
 
-If used as an a traditional STM the relevant interface is:
+If used as an a traditional STM, the relevant interface is:
 
 ```
 namespace fuse {
@@ -65,22 +65,26 @@ namespace fuse {
   template <typename T, typename F>
   T atomic_region(F f);
 
+  // can be used if f only does loads
   template <typename T, typename F>
   T atomic_read_only(F f);
 
+  // use like std::atomic
   template <typename T>
-  struct tlf_atomic<T> { // use like std::atomic
+  struct tlf_atomic<T> { 
     atomic(T v);            // constructor
     T load();               // load contents
     void store(T val);      // store contents
     T operator=(T val);     // assignment
   }
 
+  // use like 'new T(args...)'
   template <typename T>
-  T* New(args...);     // use like 'new T(args...)'
+  T* New(args...);     
 
+  // use like 'delete x'
   template <typename T>
-  void Retire(T* x);  //  use like 'delete x'
+  void Retire(T* x);  
 }
 ```
 
@@ -117,15 +121,17 @@ following additional interface can be used:
 
 ```
 namespace fuse {
+  // use like std::atomic
   template <typename T>
-  struct atomic<T> { // use like std::atomic
+  struct atomic<T> { 
     atomic(T v);            // constructor
     T load();               // load contents
     void store(T val);      // store contents
     T operator=(T val);     // assignment
   }
 
-  struct shared_mutex; // use like std::shared_mutex
+  // use like std::shared_mutex
+  struct shared_mutex; 
 
   template <typename T, typename F>
   T with_epoch(F f);
@@ -158,7 +164,7 @@ any concurrent functions if the memory it accesses can be freed
 concurrently.    `atomic_region` and `atomic_read_only` include their own
 'with-epoch`, so you don't need to uses this inside atomic regions.
 
-See [`tlf_leaftree`](structures/tlf_leaftree/ordered_map.h) for an example.  You can run this
+See [`tlf_leaftree`](include/structures/tlf_leaftree/ordered_map.h) for an example.  You can run this
 by making as described above and using, e.g.:
 ```
 ./leaftree_fuse -n 100000,10000000 -u 0,5,50 -z 0,.99 -trans 1,16
