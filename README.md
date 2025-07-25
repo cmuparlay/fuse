@@ -35,7 +35,7 @@ reporting the individual times and the geometric mean.
 The naming convention is `<struct>_<stm_system>_<variant>` where
 
 * `<struct>` is one of `arttree`, `btree`, `hash_block`, `skiplist`,
-`leaftree`, `avltree`, `treap` or `list`, and
+`leaftree`, `avltree`, `treap` or `list`, 
 * `<stm_system>` is one of `mv` (multiversion) or `2plsf`,
 * and `<variant>` is one of
   * `stm` : traditional stm
@@ -93,7 +93,7 @@ Any loads and stores of shared state should use `tlf_atomic` and any
 allocation or freeing within an atomic region should be performed with
 `New` and `Retire`.  In addition, we supply a set of TLF data
 structures.  These are all based on the
-[Verlib](https://github.com/cmuparlay/verlib) concurrent data
+[Verlib](#using-verlib) concurrent data
 structures, which all use optimistic locking.  The TLF structures can
 be used by including the relevant header file.  For example:
 
@@ -181,11 +181,17 @@ verlib namespace, and verlib style locks).
 
 ## Using Verlib
 
-This repository also includes the latest version of the verlib library from:
+This repository also includes the latest version of the verlib library described in
 
 Guy E. Blelloch and Yuanhao Wei\
 VERLIB: Concurrent Versioned Pointers\
 PPoPP 2024
+
+and for which the original artifact is available
+[here](https://github.com/cmuparlay/verlib).  The verion here is more
+up to date.
+
+
 
 To test and run those benchmarks:
 
@@ -209,7 +215,7 @@ Here the naming convention for the executable is `<struct>_<lock_type>_<versioni
 where
 
 * `<struct>` is one of `arttree`, `btree`, `hash_block`, `skiplist`,
-`leaftree`, `avltree`, `treap` or `list`, and
+`leaftree`, `avltree`, `treap` or `list`, 
 * `<lock_type>` is `lf` (lock free locks) or `lck` (traditional locks),
 * `<versioning_type>` is one of
   * `versioned` : verlib's versioning approach using indirection avoidance
