@@ -224,6 +224,8 @@ struct leaftree {
     return hrec(root->left.load(), 1);
   }
 
+  long size() { return check(); }
+  
   long check() {
     using rtup = std::tuple<K, K, long>;
     std::function<rtup(node*,bool)> crec;

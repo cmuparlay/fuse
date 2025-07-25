@@ -748,7 +748,7 @@ struct arttree {
     }
   }
   ~arttree() { retire_recursive(root);}
-  
+
   long check() {
     std::function<size_t(node*)> crec;
     crec = [&] (node* p) -> size_t {

@@ -174,7 +174,9 @@ struct list {
   }
 
   ~list() {retire_recursive(root);}
-  
+
+  long size() { return check(); }
+
   long check() {
     node* ptr = (root->next).load();
     if (ptr->is_end) return 0;

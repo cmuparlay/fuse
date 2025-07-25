@@ -169,6 +169,8 @@ struct dlist {
   }
 
   ~dlist() {retire_recursive(root);}
+
+  long size() { return check(); }
   
   long check() {
     node* ptr = (root->next).load();

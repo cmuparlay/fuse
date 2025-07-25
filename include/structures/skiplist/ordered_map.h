@@ -271,6 +271,8 @@ struct skiplist {
       } while (p != nullptr && p->level < 10);});
   }
 
+  long size() { return check(); }
+      
   long check() {
     node* p = root;
     std::vector<node*> tops;
