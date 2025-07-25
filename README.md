@@ -188,7 +188,7 @@ VERLIB: Concurrent Versioned Pointers\
 PPoPP 2024
 
 and for which the original artifact is available
-[here](https://github.com/cmuparlay/verlib).  The verion here is more
+[here](https://github.com/cmuparlay/verlib).  The version here is more
 up to date.
 
 
@@ -220,7 +220,7 @@ where
 * `<versioning_type>` is one of
   * `versioned` : verlib's versioning approach using indirection avoidance
   * `indirect` : without indirection avoidance
-  * `reconce` : for recored once structures (no indirection)
+  * `reconce` : for recorded once structures (no indirection)
   * `noshortcut` : indirection avoidance but no shortcutting
   * `noversion` : no versioning
 * and <timestamp_type> is one of
