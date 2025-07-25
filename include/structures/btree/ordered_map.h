@@ -776,6 +776,8 @@ struct btree {
     return cnt;
   }
 
+  long size() {return check(); }
+
   void print() {
     std::function<void(node*)> prec;
     prec = [&] (node* p) {
