@@ -17,11 +17,14 @@ cd build
 cmake ..
 cd benchmarks/transactions
 make -j <at most num cores on your machine>
+echo always | sudo tee /sys/kernel/mm/transparent_hugepage/enabled
 ./runtrans
 ```
 
-This will write the timings to a file in the directory `timings`.  Alternatively
-you can run individual benchmarks, e.g.:
+This will write the timings to a file in the directory `timings`.  Setting
+transparent hugepages can be skipped.   It affects the runtimes by 10-20%.
+
+You can also run the benchmarks indivdually, e.g.:
 
 ```
 ./btree_mv_tlf -n 100000,10000000 -u 0,5,50 -z 0,.99 -trans 1,16
@@ -117,6 +120,9 @@ int result = fuse::atomic_region([&] {
 Other structures include `arttree`, `hashtable`, `leaftree`, `treap`, `skiplist`, and `ordered_list`.
 Another more detailed example is given [here](examples/move.cpp).
 
+By default fuse uses the multivesion STM with the coarse-grained implementation of TLF.
+All objects for which a pointer is stored in an `fuse::tlf_atomic` should inheret `fuse::versioned`.
+
 ### Designing your own optimistic locking algorithms
 
 For designing your own optimistic locking data structures with TLF, the
@@ -167,7 +173,11 @@ any concurrent functions if the memory it accesses can be freed
 concurrently.    `atomic_region` and `atomic_read_only` include their own
 'with-epoch`, so you don't need to uses this inside atomic regions.
 
-See [`tlf_leaftree`](include/structures/tlf_leaftree/ordered_map.h) for an example.
+You can see [`ordered_list`](examples/list.h) for an example of an
+ordered list.
+
+You can also
+see [`tlf_leaftree`](include/structures/tlf_leaftree/ordered_map.h) for an example of a tree.
 This is basically the example from the paper.
 You can run this
 by making as described above and using, e.g.:

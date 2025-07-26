@@ -1,11 +1,12 @@
 function(add_example NAME SOURCE DEFS)
   add_executable(${NAME} ${SOURCE})
-   target_compile_definitions(${NAME} PRIVATE ${DEFS})
+  target_compile_definitions(${NAME} PRIVATE ${DEFS})
   target_link_libraries(${NAME} PRIVATE fuse)
 endfunction()
 
 # using fuse interface
 add_example(move move.cpp "")
+add_example(list_test list_test.cpp "")
 
 # compile for all the different STM types using verlib inteface
 add_example(move_notx move_verlib.cpp "")
